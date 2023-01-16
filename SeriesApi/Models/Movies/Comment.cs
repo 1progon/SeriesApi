@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using SeriesApi.Models.Users;
 
-namespace SeriesApi.Models.Movie;
+namespace SeriesApi.Models.Movies;
 
 public class Comment
 {
@@ -15,6 +16,6 @@ public class Comment
     public Movie Movie { get; set; } = null!;
     public int MovieId { get; set; }
 
-    public User.User Author { get; set; } = null!;
+    public User Author { get; set; } = null!;
     public int AuthorId { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace SeriesApi.Models.Movie;
+﻿namespace SeriesApi.Models.Movies;
 
 public class Tag : BaseModel
 {

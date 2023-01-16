@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SeriesApi.Models.Movie;
-using SeriesApi.Models.User;
+using SeriesApi.Models.Movies;
+using SeriesApi.Models.Users;
 
 namespace SeriesApi.Data;
 

@@ -1,6 +1,6 @@
 ﻿using SeriesApi.Enums.Movie;
 
-namespace SeriesApi.Models.Movie;
+namespace SeriesApi.Models.Movies;
 
 public class Movie : BaseModel
 {

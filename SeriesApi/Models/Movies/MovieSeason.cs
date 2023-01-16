@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SeriesApi.Models.Movie;
+namespace SeriesApi.Models.Movies;
 
 public class MovieSeason
 {

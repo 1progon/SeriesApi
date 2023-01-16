@@ -1,4 +1,4 @@
-﻿namespace SeriesApi.Enums.Movie;
+﻿namespace SeriesApi.Enums.Movies;
 
 public enum MovieType
 {
