@@ -1,4 +1,4 @@
-﻿using SeriesApi.Enums.Movie;
+﻿using SeriesApi.Enums.Movies;
 
 namespace SeriesApi.Models.Movies;
 
