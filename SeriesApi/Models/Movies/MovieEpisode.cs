@@ -2,15 +2,19 @@
 
 namespace SeriesApi.Models.Movies;
 
-public class MovieEpisode : BaseModel
+public class MovieEpisode
 {
-    [Key] public override int Id { get; set; }
+    [Key] public int Id { get; set; }
+
+    public string? Name { get; set; } = null!;
 
     public int SeriesNumber { get; set; }
 
     public MovieSeason? Season { get; set; }
     public int? SeasonId { get; set; }
 
-    public Movie? Movie { get; set; }
-    public int? MovieId { get; set; }
+    public MovieVideo? Movie { get; set; }
+    public int? MovieVideoId { get; set; }
+
+    public string? KodikLink { get; set; }
 }
