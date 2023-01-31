@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <SatelliteResourceLanguages>ru</SatelliteResourceLanguages>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Controllers\Actors" />
       <Folder Include="Controllers\Movies" />
       <Folder Include="Data\Migrations" />
     </ItemGroup>
