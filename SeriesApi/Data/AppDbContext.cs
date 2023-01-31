@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SeriesApi.Models.Actors;
 using SeriesApi.Models.Movies;
 using SeriesApi.Models.Users;
 
@@ -12,19 +13,32 @@ public class AppDbContext : DbContext
 
     // movie
     public DbSet<Movie> Movies { get; set; } = null!;
+
+    public DbSet<MovieVideo> MovieVideos { get; set; } = null!;
     public DbSet<MovieSeason> MovieSeasons { get; set; } = null!;
+
+    // todo set unique index column (seriesNumber + translate + movieId + season)
     public DbSet<MovieEpisode> MovieEpisodes { get; set; } = null!;
 
-    // anthology
+    // translations movie
+    public DbSet<Translation> Translations { get; set; } = null!;
+
+    // qualities
+    public DbSet<Quality> Qualities { get; set; } = null!;
+
+    // movie collections
+    public DbSet<Collection> Collections { get; set; } = null!;
+
+    // movie anthology
     public DbSet<Anthology> Anthologies { get; set; } = null!;
 
-    // comments
+    // movie comments
     public DbSet<Comment> Comments { get; set; } = null!;
 
     // tag
     public DbSet<Tag> Tags { get; set; } = null!;
 
-    // genre
+    // movie genres
     public DbSet<Genre> Genres { get; set; } = null!;
 
     // actors

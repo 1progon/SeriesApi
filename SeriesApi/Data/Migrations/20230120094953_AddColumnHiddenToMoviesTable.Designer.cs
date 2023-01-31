@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeriesApi.Data;
@@ -11,9 +12,11 @@ using SeriesApi.Data;
 namespace SeriesApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230120094953_AddColumnHiddenToMoviesTable")]
+    partial class AddColumnHiddenToMoviesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -235,6 +238,9 @@ namespace SeriesApi.Data.Migrations
                     b.Property<int?>("AnthologyId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Article")
+                        .HasColumnType("text");
+
                     b.Property<string>("CountryString")
                         .HasColumnType("text");
 
@@ -244,19 +250,19 @@ namespace SeriesApi.Data.Migrations
                     b.Property<bool>("EditorChoice")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("EngName")
+                        .HasColumnType("text");
+
                     b.Property<int?>("EpisodesCount")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("HiddenMovie")
+                    b.Property<bool>("Hidden")
                         .HasColumnType("boolean");
 
                     b.Property<string>("ImagesString")
                         .HasColumnType("text");
 
-                    b.Property<string>("ImdbId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("KinopoiskId")
+                    b.Property<string>("KodikLink")
                         .HasColumnType("text");
 
                     b.Property<string>("LinkParsedFrom")
@@ -268,7 +274,7 @@ namespace SeriesApi.Data.Migrations
                     b.Property<string>("MainImageThumb")
                         .HasColumnType("text");
 
-                    b.Property<string>("MdlId")
+                    b.Property<string>("MoviePath")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
@@ -293,9 +299,6 @@ namespace SeriesApi.Data.Migrations
                     b.Property<int?>("SeasonsCount")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ShikimoriId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasColumnType("text");
@@ -303,17 +306,14 @@ namespace SeriesApi.Data.Migrations
                     b.Property<bool>("Soon")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("TrailersString")
-                        .HasColumnType("text");
-
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<string>("WorldartLink")
-                        .HasColumnType("text");
-
                     b.Property<int>("Year")
                         .HasColumnType("integer");
+
+                    b.Property<string>("YouTubeTrailer")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -336,10 +336,11 @@ namespace SeriesApi.Data.Migrations
                     b.Property<string>("KodikLink")
                         .HasColumnType("text");
 
-                    b.Property<int?>("MovieVideoId")
+                    b.Property<int?>("MovieId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("SeasonId")
@@ -348,11 +349,18 @@ namespace SeriesApi.Data.Migrations
                     b.Property<int>("SeriesNumber")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("MovieVideoId");
+                    b.HasIndex("MovieId");
 
                     b.HasIndex("SeasonId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.ToTable("MovieEpisodes");
                 });
@@ -365,104 +373,17 @@ namespace SeriesApi.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("KodikLink")
-                        .HasColumnType("text");
-
-                    b.Property<int>("MovieVideoId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("SeasonNumber")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieVideoId");
-
-                    b.ToTable("MovieSeasons");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Movies.MovieVideo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Camrip")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("EpisodesCount")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("HiddenVideo")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("KodikLink")
-                        .HasColumnType("text");
-
-                    b.Property<string>("KodikMovieId")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("LastEpisode")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("LastSeason")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("Lgbt")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("MovieId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("QualityId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("SeasonsCount")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TranslationId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KodikMovieId")
-                        .IsUnique();
-
-                    b.HasIndex("MovieId");
-
-                    b.HasIndex("QualityId");
-
-                    b.HasIndex("TranslationId");
-
-                    b.ToTable("MovieVideos");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Movies.Quality", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Qualities");
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("MovieSeasons");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Movies.Tag", b =>
@@ -487,36 +408,6 @@ namespace SeriesApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Movies.Translation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("KodikTranslationId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Slug")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Slug")
-                        .IsUnique();
-
-                    b.ToTable("Translations");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Users.User", b =>
@@ -639,9 +530,9 @@ namespace SeriesApi.Data.Migrations
 
             modelBuilder.Entity("SeriesApi.Models.Movies.MovieEpisode", b =>
                 {
-                    b.HasOne("SeriesApi.Models.Movies.MovieVideo", "Movie")
+                    b.HasOne("SeriesApi.Models.Movies.Movie", "Movie")
                         .WithMany("Episodes")
-                        .HasForeignKey("MovieVideoId");
+                        .HasForeignKey("MovieId");
 
                     b.HasOne("SeriesApi.Models.Movies.MovieSeason", "Season")
                         .WithMany("Episodes")
@@ -654,40 +545,13 @@ namespace SeriesApi.Data.Migrations
 
             modelBuilder.Entity("SeriesApi.Models.Movies.MovieSeason", b =>
                 {
-                    b.HasOne("SeriesApi.Models.Movies.MovieVideo", "MovieVideo")
-                        .WithMany("Seasons")
-                        .HasForeignKey("MovieVideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MovieVideo");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Movies.MovieVideo", b =>
-                {
                     b.HasOne("SeriesApi.Models.Movies.Movie", "Movie")
-                        .WithMany("MovieVideos")
+                        .WithMany("Seasons")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SeriesApi.Models.Movies.Quality", "Quality")
-                        .WithMany()
-                        .HasForeignKey("QualityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SeriesApi.Models.Movies.Translation", "Translation")
-                        .WithMany()
-                        .HasForeignKey("TranslationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Movie");
-
-                    b.Navigation("Quality");
-
-                    b.Navigation("Translation");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Movies.Anthology", b =>
@@ -699,19 +563,14 @@ namespace SeriesApi.Data.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("MovieVideos");
+                    b.Navigation("Episodes");
+
+                    b.Navigation("Seasons");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Movies.MovieSeason", b =>
                 {
                     b.Navigation("Episodes");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Movies.MovieVideo", b =>
-                {
-                    b.Navigation("Episodes");
-
-                    b.Navigation("Seasons");
                 });
 #pragma warning restore 612, 618
         }
