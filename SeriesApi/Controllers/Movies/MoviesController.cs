@@ -93,7 +93,8 @@ namespace SeriesApi.Controllers.Movies
 
             var movie = await _context.Movies
                 .Include(m => m.MovieVideos
-                    .OrderByDescending(mv => mv.Seasons.Count)
+                    .OrderBy(mv => mv.Translation.Type)
+                    .ThenByDescending(mv => mv.Seasons.Count)
                     .Take(1))
                 .ThenInclude(mv => mv.Seasons
                     .OrderBy(ms => ms.SeasonNumber)
