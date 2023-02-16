@@ -25,6 +25,9 @@
 
     <ItemGroup>
       <Folder Include="Controllers\Actors" />
+      <Folder Include="Controllers\Auth" />
+      <Folder Include="Controllers\UserAccount" />
+      <Folder Include="Controllers\Users" />
       <Folder Include="Controllers\Movies" />
       <Folder Include="Data\Migrations" />
     </ItemGroup>
