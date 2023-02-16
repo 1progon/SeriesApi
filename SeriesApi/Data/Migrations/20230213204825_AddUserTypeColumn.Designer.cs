@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeriesApi.Data;
@@ -11,9 +12,11 @@ using SeriesApi.Data;
 namespace SeriesApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230213204825_AddUserTypeColumn")]
+    partial class AddUserTypeColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,39 +113,6 @@ namespace SeriesApi.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Actors");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Middle.UserFavoriteMovie", b =>
-                {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("MovieId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserMovieFavorites");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Middle.UserMovieLikeDislike", b =>
-                {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("MovieId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserMovieLikeDislikes");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Movies.Anthology", b =>
@@ -274,9 +244,6 @@ namespace SeriesApi.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("DisLikes")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("EditorChoice")
                         .HasColumnType("boolean");
 
@@ -294,9 +261,6 @@ namespace SeriesApi.Data.Migrations
 
                     b.Property<string>("KinopoiskId")
                         .HasColumnType("text");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("integer");
 
                     b.Property<string>("LinkParsedFrom")
                         .HasColumnType("text");
@@ -681,44 +645,6 @@ namespace SeriesApi.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SeriesApi.Models.Middle.UserFavoriteMovie", b =>
-                {
-                    b.HasOne("SeriesApi.Models.Movies.Movie", "Movie")
-                        .WithMany("UsersFavorites")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SeriesApi.Models.Users.User", "User")
-                        .WithMany("FavoriteMovies")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Middle.UserMovieLikeDislike", b =>
-                {
-                    b.HasOne("SeriesApi.Models.Movies.Movie", "Movie")
-                        .WithMany("UsersLikes")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SeriesApi.Models.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SeriesApi.Models.Movies.Comment", b =>
                 {
                     b.HasOne("SeriesApi.Models.Users.User", "Author")
@@ -810,10 +736,6 @@ namespace SeriesApi.Data.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("MovieVideos");
-
-                    b.Navigation("UsersFavorites");
-
-                    b.Navigation("UsersLikes");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Movies.MovieSeason", b =>
@@ -824,11 +746,6 @@ namespace SeriesApi.Data.Migrations
             modelBuilder.Entity("SeriesApi.Models.Movies.MovieVideo", b =>
                 {
                     b.Navigation("Seasons");
-                });
-
-            modelBuilder.Entity("SeriesApi.Models.Users.User", b =>
-                {
-                    b.Navigation("FavoriteMovies");
                 });
 #pragma warning restore 612, 618
         }

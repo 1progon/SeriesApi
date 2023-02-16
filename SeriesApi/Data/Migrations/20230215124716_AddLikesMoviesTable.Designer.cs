@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SeriesApi.Data;
@@ -11,9 +12,11 @@ using SeriesApi.Data;
 namespace SeriesApi.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230215124716_AddLikesMoviesTable")]
+    partial class AddLikesMoviesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,9 +277,6 @@ namespace SeriesApi.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("DisLikes")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("EditorChoice")
                         .HasColumnType("boolean");
 
@@ -294,9 +294,6 @@ namespace SeriesApi.Data.Migrations
 
                     b.Property<string>("KinopoiskId")
                         .HasColumnType("text");
-
-                    b.Property<int>("Likes")
-                        .HasColumnType("integer");
 
                     b.Property<string>("LinkParsedFrom")
                         .HasColumnType("text");
@@ -703,7 +700,7 @@ namespace SeriesApi.Data.Migrations
             modelBuilder.Entity("SeriesApi.Models.Middle.UserMovieLikeDislike", b =>
                 {
                     b.HasOne("SeriesApi.Models.Movies.Movie", "Movie")
-                        .WithMany("UsersLikes")
+                        .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -812,8 +809,6 @@ namespace SeriesApi.Data.Migrations
                     b.Navigation("MovieVideos");
 
                     b.Navigation("UsersFavorites");
-
-                    b.Navigation("UsersLikes");
                 });
 
             modelBuilder.Entity("SeriesApi.Models.Movies.MovieSeason", b =>

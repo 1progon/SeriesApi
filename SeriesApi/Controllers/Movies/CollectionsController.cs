@@ -47,7 +47,7 @@ namespace SeriesApi.Controllers.Movies
         // PUT: api/Collections/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutCollection(int id, Collection collection)
         {
             if (id != collection.Id)
@@ -79,7 +79,7 @@ namespace SeriesApi.Controllers.Movies
         // POST: api/Collections
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Collection>> PostCollection(Collection collection)
         {
             if (_context.Collections == null)
@@ -95,7 +95,7 @@ namespace SeriesApi.Controllers.Movies
 
         // DELETE: api/Collections/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCollection(int id)
         {
             if (_context.Collections == null)

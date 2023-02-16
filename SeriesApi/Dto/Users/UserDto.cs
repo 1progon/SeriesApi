@@ -1,17 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
 using SeriesApi.Enums.Users;
-using SeriesApi.Models.Middle;
 
-namespace SeriesApi.Models.Users;
+namespace SeriesApi.Dto.Users;
 
-public class User
+public class UserDto
 {
-    [Key]
-    public int Id { get; set; }
-
     public Guid Guid { get; set; }
     public string Email { get; set; } = null!;
-    public string Password { get; set; } = null!;
 
     public string? Gender { get; set; }
     public string? BirthDate { get; set; }
@@ -28,11 +22,8 @@ public class User
     public string? VkProfile { get; set; }
     public string? OkProfile { get; set; }
 
-
     public string? Token { get; set; }
-    public string? TokenExpire { get; set; }
+    public int? TokenExpire { get; set; }
 
     public UserType Type { get; set; }
-
-    public IList<UserFavoriteMovie> FavoriteMovies { get; set; } = new List<UserFavoriteMovie>();
 }

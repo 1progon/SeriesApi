@@ -1,5 +1,6 @@
 ﻿using SeriesApi.Enums.Movies;
 using SeriesApi.Models.Actors;
+using SeriesApi.Models.Middle;
 
 namespace SeriesApi.Models.Movies;
 
@@ -18,6 +19,9 @@ public class Movie : BaseModel
     public string? PremierDate { get; set; }
 
     public string? CountryString { get; set; }
+
+    public int Likes { get; set; }
+    public int DisLikes { get; set; }
 
     public float? Rating { get; set; }
     public int? RatingCount { get; set; }
@@ -53,4 +57,7 @@ public class Movie : BaseModel
     public string? MdlId { get; set; }
     public string? ShikimoriId { get; set; }
     public string? WorldartLink { get; set; }
+
+    public IList<UserFavoriteMovie> UsersFavorites { get; set; } = new List<UserFavoriteMovie>();
+    public IList<UserMovieLikeDislike> UsersLikes { get; set; } = new List<UserMovieLikeDislike>();
 }

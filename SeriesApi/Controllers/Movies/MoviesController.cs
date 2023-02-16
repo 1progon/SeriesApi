@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SeriesApi.Data;
 using SeriesApi.Dto.Movies;
 using SeriesApi.Enums.Movies;
+using SeriesApi.Models.Middle;
 using SeriesApi.Models.Movies;
 
 namespace SeriesApi.Controllers.Movies
@@ -13,6 +14,7 @@ namespace SeriesApi.Controllers.Movies
     public class MoviesController : ControllerBase
     {
         private readonly AppDbContext _context;
+
 
         public MoviesController(AppDbContext context) => _context = context;
 
@@ -87,11 +89,13 @@ namespace SeriesApi.Controllers.Movies
 
         // GET: api/Movies/slug-name
         [HttpGet("{slug}")]
-        public async Task<ActionResult<GetMoviesShowDto>> GetMovie(string slug)
+        public async Task<ActionResult<GetMoviesShowDto>> GetMovie([FromRoute] string slug)
         {
             if (!await _context.Movies.AnyAsync()) return NotFound();
 
-            var movie = await _context.Movies
+            var movieQ = _context.Movies.AsQueryable();
+
+            movieQ
                 .Include(m => m.MovieVideos
                     .OrderBy(mv => mv.Translation.Type)
                     .ThenByDescending(mv => mv.Seasons.Count)
@@ -108,7 +112,31 @@ namespace SeriesApi.Controllers.Movies
                 .Include(m => m.Comments)
                 .Include(m => m.Collections)
                 .Include(m => m.Anthology)
-                .ThenInclude(a => a.Movies).OrderBy(m => m.Year)
+                .ThenInclude(a => a.Movies);
+
+
+            if (User.Identity is { IsAuthenticated: true })
+            {
+                Guid.TryParse(User.Identity?.Name, out var guid);
+
+                if (guid != Guid.Empty)
+                {
+                    movieQ = movieQ
+                        .Include(m => m.UsersLikes
+                            .Where(l => l.Movie.Slug == slug
+                                        && l.User.Guid == guid));
+
+
+                    movieQ = movieQ
+                        .Include(m => m.UsersFavorites
+                            .Where(f => f.Movie.Slug == slug
+                                        && f.User.Guid == guid));
+                }
+            }
+
+
+            var movie = await movieQ
+                .OrderBy(m => m.Year)
                 .SingleOrDefaultAsync(m => m.Slug == slug);
 
             if (movie == null) return NotFound();
@@ -160,16 +188,98 @@ namespace SeriesApi.Controllers.Movies
             };
         }
 
+
+        [HttpPost("AddLikeDislike/{movieId:int}")]
+        [Authorize]
+        public async Task<IActionResult> AddLikeDislikeToMovie(
+            [FromRoute] int movieId,
+            [FromBody] MovieLikeDislikeType type)
+        {
+
+            Guid.TryParse(User.Identity?.Name, out var guid);
+
+            var user = await _context
+                .Users
+                .SingleOrDefaultAsync(u => u.Guid == guid);
+
+            if (user is null) return Unauthorized();
+
+            var movie = await _context.Movies.FindAsync(movieId);
+            if (movie is null)
+                return BadRequest(new { Message = "Кино не найдено" });
+
+
+            var likeFromDb = await _context
+                .UserMovieLikeDislikes
+                .SingleOrDefaultAsync(d => d.Movie == movie
+                                           && d.User == user);
+
+            if (likeFromDb is not null)
+            {
+                // recount with remove old like count
+                switch (likeFromDb.Type)
+                {
+                    case MovieLikeDislikeType.Like:
+                        movie.Likes -= 1;
+                        break;
+                    case MovieLikeDislikeType.Dislike:
+                        movie.DisLikes -= 1;
+                        break;
+                }
+            }
+
+            if (likeFromDb is not null && likeFromDb.Type == type)
+            {
+                _context.Movies.Update(movie);
+                _context.UserMovieLikeDislikes.Remove(likeFromDb);
+                await _context.SaveChangesAsync();
+
+
+                return Ok(new { movie.Likes, movie.DisLikes });
+            }
+
+
+            if (likeFromDb is null)
+            {
+                likeFromDb = new UserMovieLikeDislike
+                {
+                    Movie = movie,
+                    User = user,
+                };
+
+                await _context.UserMovieLikeDislikes.AddAsync(likeFromDb);
+            }
+
+
+            // recount with new like
+            switch (type)
+            {
+                case MovieLikeDislikeType.Like:
+                    movie.Likes += 1;
+                    break;
+                case MovieLikeDislikeType.Dislike:
+                    movie.DisLikes += 1;
+                    break;
+            }
+
+
+            likeFromDb.Type = type;
+
+
+            _context.Movies.Update(movie);
+            await _context.SaveChangesAsync();
+
+
+            return Ok(new { movie.Likes, movie.DisLikes });
+        }
+
         // PUT: api/Movies/5
         // To protect from over posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutMovie(int id, Movie movie)
         {
-            if (id != movie.Id)
-            {
-                return BadRequest();
-            }
+            if (id != movie.Id) return BadRequest();
 
             _context.Entry(movie).State = EntityState.Modified;
 
@@ -195,7 +305,7 @@ namespace SeriesApi.Controllers.Movies
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
             if (_context.Movies == null)
@@ -211,13 +321,11 @@ namespace SeriesApi.Controllers.Movies
 
         // DELETE: api/Movies/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
             if (_context.Movies == null)
-            {
                 return NotFound();
-            }
 
             var movie = await _context.Movies.FindAsync(id);
             if (movie == null)

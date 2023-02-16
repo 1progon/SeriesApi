@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeriesApi.Models.Actors;
+using SeriesApi.Models.Middle;
 using SeriesApi.Models.Movies;
 using SeriesApi.Models.Users;
 
@@ -19,6 +20,10 @@ public class AppDbContext : DbContext
 
     // todo set unique index column (seriesNumber + translate + movieId + season)
     public DbSet<MovieEpisode> MovieEpisodes { get; set; } = null!;
+    
+    // movies-users many to many
+    public DbSet<UserFavoriteMovie> UserMovieFavorites { get; set; } = null!;
+    public DbSet<UserMovieLikeDislike> UserMovieLikeDislikes { get; set; } = null!;
 
     // translations movie
     public DbSet<Translation> Translations { get; set; } = null!;

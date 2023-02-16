@@ -52,7 +52,7 @@ namespace SeriesApi.Controllers.Actors
         // PUT: api/Actors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutActor(int id, Actor actor)
         {
             if (id != actor.Id)
@@ -84,7 +84,7 @@ namespace SeriesApi.Controllers.Actors
         // POST: api/Actors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Actor>> PostActor(Actor actor)
         {
             if (_context.Actors == null)
@@ -100,7 +100,7 @@ namespace SeriesApi.Controllers.Actors
 
         // DELETE: api/Actors/5
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteActor(int id)
         {
             if (_context.Actors == null)
