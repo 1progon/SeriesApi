@@ -1,6 +1,9 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SeriesApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +12,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connString = builder.Configuration.GetConnectionString("AppDbContext");
 
-builder.Services.AddNpgsql<AppDbContext>(connString,
-    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery));
+builder.Services
+    .AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(o =>
+    {
+        o.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration.GetSection("Jwt")["Issuer"],
+
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration.GetSection("Jwt")["Audience"],
+
+            ValidateLifetime = true,
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding
+                    .UTF8
+                    .GetBytes(builder.Configuration.GetSection("Jwt")["Key"] ?? "")),
+
+            ValidateIssuerSigningKey = true,
+        };
+    });
+
+builder.Services.AddNpgsql<AppDbContext>(
+    connString,
+    o =>
+        o.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery));
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => { o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
@@ -46,6 +74,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // use wwwroot dir for html css assets
