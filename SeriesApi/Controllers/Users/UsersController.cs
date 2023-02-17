@@ -46,7 +46,7 @@ namespace SeriesApi.Controllers.Users
             await _context.SaveChangesAsync();
 
 
-            return UserDtoMapping(user);
+            return UserDtoMapping(user, dto.Token);
         }
 
         // GET: api/Auth
