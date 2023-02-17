@@ -9,7 +9,6 @@ namespace SeriesApi.Controllers.Users
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
