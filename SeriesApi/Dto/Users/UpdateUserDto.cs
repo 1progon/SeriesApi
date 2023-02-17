@@ -21,6 +21,8 @@ public class UpdateUserDto
     public string? VkProfile { get; set; }
     public string? OkProfile { get; set; }
 
+    public string Token { get; set; } = null!;
+
     public string? Password { get; set; }
     public string? PasswordConfirm { get; set; }
 }
