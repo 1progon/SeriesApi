@@ -95,8 +95,7 @@ namespace SeriesApi.Controllers.Movies
 
             var movieQ = _context.Movies.AsQueryable();
 
-            movieQ
-                .Include(m => m.MovieVideos
+            movieQ = movieQ.Include(m => m.MovieVideos
                     .OrderBy(mv => mv.Translation.Type)
                     .ThenByDescending(mv => mv.Seasons.Count)
                     .Take(1))
@@ -140,6 +139,8 @@ namespace SeriesApi.Controllers.Movies
                 .SingleOrDefaultAsync(m => m.Slug == slug);
 
             if (movie == null) return NotFound();
+
+            Console.WriteLine(movie.MovieVideos.Count);
 
             return new GetMoviesShowDto()
             {
@@ -195,7 +196,6 @@ namespace SeriesApi.Controllers.Movies
             [FromRoute] int movieId,
             [FromBody] MovieLikeDislikeType type)
         {
-
             Guid.TryParse(User.Identity?.Name, out var guid);
 
             var user = await _context
