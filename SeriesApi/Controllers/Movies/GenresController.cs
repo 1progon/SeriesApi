@@ -35,7 +35,11 @@ namespace SeriesApi.Controllers.Movies
                     .Take(limit))
                 .SingleOrDefaultAsync(g => g.Slug == slug);
 
-            if (genre == null) return NotFound();
+
+            if (genre == null || offset >= limit && !genre.Movies.Any())
+            {
+                return NotFound();
+            }
 
             return genre;
         }
