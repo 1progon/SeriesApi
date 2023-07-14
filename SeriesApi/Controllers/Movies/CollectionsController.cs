@@ -39,7 +39,8 @@ namespace SeriesApi.Controllers.Movies
                     .Take(limit))
                 .SingleOrDefaultAsync(c => c.Slug == slug);
 
-            if (collection == null) return NotFound();
+            if (collection == null || offset >= limit && !collection.Movies.Any())
+                return NotFound();
 
             return collection;
         }
