@@ -140,8 +140,6 @@ namespace SeriesApi.Controllers.Movies
 
             if (movie == null) return NotFound();
 
-            Console.WriteLine(movie.MovieVideos.Count);
-
             return new GetMoviesShowDto()
             {
                 Anthology = movie.Anthology,
