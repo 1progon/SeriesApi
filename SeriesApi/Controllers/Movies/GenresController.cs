@@ -31,6 +31,7 @@ namespace SeriesApi.Controllers.Movies
         {
             var genre = await _context.Genres
                 .Include(g => g.Movies
+                    .OrderBy(m => m.Name)
                     .Skip(offset)
                     .Take(limit))
                 .SingleOrDefaultAsync(g => g.Slug == slug);
