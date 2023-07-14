@@ -22,6 +22,7 @@ namespace SeriesApi.Controllers.Actors
         )
         {
             return await _context.Actors
+                .OrderBy(a => a.Name)
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();
