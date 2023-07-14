@@ -39,6 +39,7 @@ namespace SeriesApi.Controllers.Actors
 
             var actor = await _context.Actors
                 .Include(a => a.Movies
+                    .OrderBy(m => m.Name)
                     .Skip(offset)
                     .Take(limit))
                 .SingleOrDefaultAsync(a => a.Slug == slug);
