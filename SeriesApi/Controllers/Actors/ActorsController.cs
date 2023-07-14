@@ -44,7 +44,8 @@ namespace SeriesApi.Controllers.Actors
                     .Take(limit))
                 .SingleOrDefaultAsync(a => a.Slug == slug);
 
-            if (actor == null) return NotFound();
+            if (actor == null || offset >= limit && !actor.Movies.Any())
+                return NotFound();
 
 
             return actor;
