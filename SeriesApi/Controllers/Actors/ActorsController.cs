@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +12,13 @@ namespace SeriesApi.Controllers.Actors
     public class ActorsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public ActorsController(AppDbContext context) => _context = context;
+        public ActorsController(AppDbContext context, IWebHostEnvironment env)
+        {
+            _context = context;
+            _env = env;
+        }
 
         // GET: api/Actors
         [HttpGet]
@@ -21,11 +27,57 @@ namespace SeriesApi.Controllers.Actors
             [FromQuery] int limit = 28
         )
         {
-            return await _context.Actors
+            // generate cache name
+            var cacheName = $"actors-index-offset-{offset}-limit-{limit}";
+
+            // cache path
+            var cachePath = $"{_env.ContentRootPath}/storage/cache/actors/{cacheName}.json";
+
+            // check if cache exists
+            // todo move cache to separate service
+            if (System.IO.File.Exists(cachePath))
+            {
+                // check file is expire
+                if (System.IO.File.GetLastWriteTimeUtc(cachePath).AddDays(3) < DateTime.UtcNow   )
+                {
+                    //  remove file
+                    System.IO.File.Delete(cachePath);
+                }
+                else
+                {
+                    // read cache file
+                    await using (var read = new FileStream(cachePath, FileMode.Open))
+                    {
+                        var actorsFromCache = await JsonSerializer.DeserializeAsync<List<Actor>>(read);
+                        read.Close();
+
+                        if (actorsFromCache is not null)
+                        {
+                            return actorsFromCache;
+                        }
+                    }
+                }
+         
+            }
+
+
+            // get data from db
+            var actors = await _context.Actors
                 .OrderBy(a => a.Name)
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();
+
+            // save data to file for cache
+            await using (var cacheFile = new FileStream(cachePath, FileMode.Create))
+            {
+                Console.WriteLine("generate cache file");
+                await JsonSerializer.SerializeAsync(cacheFile, actors);
+                cacheFile.Close();
+            }
+
+
+            return actors;
         }
 
         // GET: api/Actors/slug-actor
