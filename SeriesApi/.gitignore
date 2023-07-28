@@ -1,2 +1,8 @@
-﻿/appsettings.json
+﻿#production app settings
+/appsettings.json
+
+# sql migrations file
 /Data/sql.sql
+
+#cache folders
+/Storage/Cache/
