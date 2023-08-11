@@ -78,26 +78,24 @@ namespace SeriesApi.Controllers.Movies
             [FromQuery] int offset = 0)
         {
             var genre = await _context.Genres
-                .Include(g => g.Movies
-                    .OrderBy(m => m.Name)
-                    .Skip(offset)
-                    .Take(limit)
-                )
                 .Select(g => new GenreShowDto
                 {
                     Name = g.Name,
                     Slug = g.Slug,
-                    Movies = (IList<MovieDto>)g.Movies.Select(m => new MovieDto
-                    {
-                        Name = m.Name,
-                        Slug = m.Slug,
-                        MainImageThumb = m.MainImageThumb,
-                        Year = m.Year,
-                        Rating = m.Rating,
-                        SeasonsCount = m.SeasonsCount,
-                        EpisodesCount = m.EpisodesCount,
-                        CommentsCount = m.Comments != null ? m.Comments.Count : null
-                    })
+                    Movies = (IList<MovieDto>)g.Movies
+                        .Skip(offset)
+                        .Take(limit)
+                        .Select(m => new MovieDto
+                        {
+                            Name = m.Name,
+                            Slug = m.Slug,
+                            MainImageThumb = m.MainImageThumb,
+                            Year = m.Year,
+                            Rating = m.Rating,
+                            SeasonsCount = m.SeasonsCount,
+                            EpisodesCount = m.EpisodesCount,
+                            CommentsCount = m.Comments != null ? m.Comments.Count : null
+                        })
                 })
                 .SingleOrDefaultAsync(g => g.Slug == slug);
 

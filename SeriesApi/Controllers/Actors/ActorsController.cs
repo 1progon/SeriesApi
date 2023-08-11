@@ -105,26 +105,25 @@ namespace SeriesApi.Controllers.Actors
             if (!await _context.Actors.AnyAsync()) return NotFound();
 
             var actor = await _context.Actors
-                .Include(a => a.Movies
-                    .OrderBy(m => m.Name)
-                    .Skip(offset)
-                    .Take(limit))
                 .Select(a => new ActorShowDto
                 {
                     Name = a.Name,
                     Slug = a.Slug,
                     MainThumb = a.MainThumb,
-                    Movies = (IList<MovieDto>)a.Movies.Select(m => new MovieDto
-                    {
-                        Name = m.Name,
-                        Slug = m.Slug,
-                        MainImageThumb = m.MainImageThumb,
-                        Year = m.Year,
-                        Rating = m.Rating,
-                        SeasonsCount = m.SeasonsCount,
-                        EpisodesCount = m.EpisodesCount,
-                        CommentsCount = m.Comments != null ? m.Comments.Count : null
-                    })
+                    Movies = (IList<MovieDto>)a.Movies
+                        .Skip(offset)
+                        .Take(limit)
+                        .Select(m => new MovieDto
+                        {
+                            Name = m.Name,
+                            Slug = m.Slug,
+                            MainImageThumb = m.MainImageThumb,
+                            Year = m.Year,
+                            Rating = m.Rating,
+                            SeasonsCount = m.SeasonsCount,
+                            EpisodesCount = m.EpisodesCount,
+                            CommentsCount = m.Comments != null ? m.Comments.Count : null
+                        })
                 })
                 .SingleOrDefaultAsync(a => a.Slug == slug);
 
