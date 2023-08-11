@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeriesApi.Data;
 using SeriesApi.Dto.Actors;
+using SeriesApi.Dto.Movies;
 using SeriesApi.Models.Actors;
 
 namespace SeriesApi.Controllers.Actors
@@ -95,7 +96,7 @@ namespace SeriesApi.Controllers.Actors
 
         // GET: api/Actors/slug-actor
         [HttpGet("{slug}")]
-        public async Task<ActionResult<Actor>> GetActor(
+        public async Task<ActionResult<ActorShowDto>> GetActor(
             string slug,
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 28
@@ -108,6 +109,23 @@ namespace SeriesApi.Controllers.Actors
                     .OrderBy(m => m.Name)
                     .Skip(offset)
                     .Take(limit))
+                .Select(a => new ActorShowDto
+                {
+                    Name = a.Name,
+                    Slug = a.Slug,
+                    MainThumb = a.MainThumb,
+                    Movies = (IList<MovieDto>)a.Movies.Select(m => new MovieDto
+                    {
+                        Name = m.Name,
+                        Slug = m.Slug,
+                        MainImageThumb = m.MainImageThumb,
+                        Year = m.Year,
+                        Rating = m.Rating,
+                        SeasonsCount = m.SeasonsCount,
+                        EpisodesCount = m.EpisodesCount,
+                        CommentsCount = m.Comments != null ? m.Comments.Count : null
+                    })
+                })
                 .SingleOrDefaultAsync(a => a.Slug == slug);
 
             if (actor == null || offset >= limit && !actor.Movies.Any())

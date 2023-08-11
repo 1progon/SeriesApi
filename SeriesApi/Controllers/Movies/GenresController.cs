@@ -87,7 +87,7 @@ namespace SeriesApi.Controllers.Movies
                 {
                     Name = g.Name,
                     Slug = g.Slug,
-                    Movies = g.Movies.Select(m => new MovieDto
+                    Movies = (IList<MovieDto>)g.Movies.Select(m => new MovieDto
                     {
                         Name = m.Name,
                         Slug = m.Slug,
@@ -97,7 +97,7 @@ namespace SeriesApi.Controllers.Movies
                         SeasonsCount = m.SeasonsCount,
                         EpisodesCount = m.EpisodesCount,
                         CommentsCount = m.Comments != null ? m.Comments.Count : null
-                    }).ToList()
+                    })
                 })
                 .SingleOrDefaultAsync(g => g.Slug == slug);
 
