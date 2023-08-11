@@ -32,6 +32,8 @@
       <Folder Include="Controllers\Movies" />
       <Folder Include="Data\Migrations" />
       <Folder Include="storage\cache\" />
+      <Folder Include="storage\cache\actors\" />
+      <Folder Include="storage\cache\genres\" />
     </ItemGroup>
 
     <ItemGroup>
