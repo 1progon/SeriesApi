@@ -72,7 +72,7 @@ namespace SeriesApi.Controllers.Movies
 
         // GET: api/Genres/slug-name
         [HttpGet("{slug}")]
-        public async Task<ActionResult<Genre>> GetGenre(
+        public async Task<ActionResult<GenreShowDto>> GetGenre(
             [FromRoute] string slug,
             [FromQuery] int limit = 28,
             [FromQuery] int offset = 0)
@@ -81,7 +81,24 @@ namespace SeriesApi.Controllers.Movies
                 .Include(g => g.Movies
                     .OrderBy(m => m.Name)
                     .Skip(offset)
-                    .Take(limit))
+                    .Take(limit)
+                )
+                .Select(g => new GenreShowDto
+                {
+                    Name = g.Name,
+                    Slug = g.Slug,
+                    Movies = g.Movies.Select(m => new MovieDto
+                    {
+                        Name = m.Name,
+                        Slug = m.Slug,
+                        MainImageThumb = m.MainImageThumb,
+                        Year = m.Year,
+                        Rating = m.Rating,
+                        SeasonsCount = m.SeasonsCount,
+                        EpisodesCount = m.EpisodesCount,
+                        CommentsCount = m.Comments != null ? m.Comments.Count : null
+                    }).ToList()
+                })
                 .SingleOrDefaultAsync(g => g.Slug == slug);
 
 
