@@ -20,7 +20,7 @@ namespace SeriesApi.Controllers.Movies
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies(
+        public async Task<ActionResult<IEnumerable<MovieDto>>> GetMovies(
             [FromQuery] MoviesSelector? selector,
             [FromQuery] string? search,
             [FromQuery] int limit = 28,
@@ -79,7 +79,19 @@ namespace SeriesApi.Controllers.Movies
 
             query = query.Skip(offset).Take(limit);
 
-            var movies = await query.ToListAsync();
+            var movies = await query
+                .Select(m => new MovieDto
+                {
+                    Name = m.Name,
+                    Slug = m.Slug,
+                    MainImageThumb = m.MainImageThumb,
+                    Year = m.Year,
+                    Rating = m.Rating,
+                    SeasonsCount = m.SeasonsCount,
+                    EpisodesCount = m.EpisodesCount,
+                    CommentsCount = m.Comments != null ? m.Comments.Count : null
+                })
+                .ToListAsync();
 
 
             if (offset >= limit && movies.Count < 1) return NotFound();
