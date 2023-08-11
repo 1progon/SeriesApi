@@ -1,8 +1,10 @@
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeriesApi.Data;
+using SeriesApi.Dto.Actors;
 using SeriesApi.Models.Actors;
 
 namespace SeriesApi.Controllers.Actors
@@ -22,7 +24,7 @@ namespace SeriesApi.Controllers.Actors
 
         // GET: api/Actors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Actor>>> GetActors(
+        public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 28
         )
@@ -38,7 +40,7 @@ namespace SeriesApi.Controllers.Actors
             if (System.IO.File.Exists(cachePath))
             {
                 // check file is expire
-                if (System.IO.File.GetLastWriteTimeUtc(cachePath).AddDays(3) < DateTime.UtcNow   )
+                if (System.IO.File.GetLastWriteTimeUtc(cachePath).AddDays(3) < DateTime.UtcNow)
                 {
                     //  remove file
                     System.IO.File.Delete(cachePath);
@@ -48,7 +50,7 @@ namespace SeriesApi.Controllers.Actors
                     // read cache file
                     await using (var read = new FileStream(cachePath, FileMode.Open))
                     {
-                        var actorsFromCache = await JsonSerializer.DeserializeAsync<List<Actor>>(read);
+                        var actorsFromCache = await JsonSerializer.DeserializeAsync<List<ActorDto>>(read);
                         read.Close();
 
                         if (actorsFromCache is not null)
@@ -57,7 +59,6 @@ namespace SeriesApi.Controllers.Actors
                         }
                     }
                 }
-         
             }
 
 
@@ -66,13 +67,22 @@ namespace SeriesApi.Controllers.Actors
                 .OrderBy(a => a.Name)
                 .Skip(offset)
                 .Take(limit)
+                .Select(a => new ActorDto
+                {
+                    Name = a.Name,
+                    Slug = a.Slug,
+                    MainThumb = a.MainThumb
+                })
                 .ToListAsync();
 
             // save data to file for cache
             await using (var cacheFile = new FileStream(cachePath, FileMode.Create))
             {
                 Console.WriteLine("generate cache file");
-                await JsonSerializer.SerializeAsync(cacheFile, actors);
+                await JsonSerializer.SerializeAsync(cacheFile, actors, new JsonSerializerOptions
+                {
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                });
                 cacheFile.Close();
             }
 
