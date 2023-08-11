@@ -77,6 +77,9 @@ namespace SeriesApi.Controllers.Actors
                 .ToListAsync();
 
             // save data to file for cache
+
+            if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
+
             await using (var cacheFile = new FileStream(cachePath, FileMode.Create))
             {
                 await JsonSerializer.SerializeAsync(cacheFile, actors, new JsonSerializerOptions
