@@ -33,7 +33,8 @@ namespace SeriesApi.Controllers.Actors
             var cacheName = $"actors-index-offset-{offset}-limit-{limit}";
 
             // cache path
-            var cachePath = $"{_env.ContentRootPath}/storage/cache/actors/{cacheName}.json";
+            var cacheDir = $"{_env.ContentRootPath}/storage/cache/actors";
+            var cachePath = $"{cacheDir}/{cacheName}.json";
 
             // check if cache exists
             // todo move cache to separate service
