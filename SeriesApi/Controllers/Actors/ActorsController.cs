@@ -79,7 +79,6 @@ namespace SeriesApi.Controllers.Actors
             // save data to file for cache
             await using (var cacheFile = new FileStream(cachePath, FileMode.Create))
             {
-                Console.WriteLine("generate cache file");
                 await JsonSerializer.SerializeAsync(cacheFile, actors, new JsonSerializerOptions
                 {
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
