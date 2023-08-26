@@ -26,18 +26,24 @@ namespace SeriesApi.Controllers.Actors
         // GET: api/Actors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ActorDto>>> GetActors(
+            [FromQuery] string? startsWith,
             [FromQuery] int offset = 0,
             [FromQuery] int limit = 28
         )
         {
             // generate cache name
             var cacheName = $"actors-index-offset-{offset}-limit-{limit}";
+            if (startsWith is not null)
+            {
+                cacheName += $"-starts-with-{startsWith}";
+            }
 
             // cache path
             var cacheDir = $"{_env.ContentRootPath}/storage/cache/actors";
             var cachePath = $"{cacheDir}/{cacheName}.json";
 
             // check if cache exists
+
             // todo move cache to separate service
             if (System.IO.File.Exists(cachePath))
             {
@@ -65,21 +71,42 @@ namespace SeriesApi.Controllers.Actors
 
 
             // get data from db
-            var actors = await _context.Actors
+            var actorsQ = _context.Actors
                 .OrderBy(a => a.Name)
-                .Skip(offset)
-                .Take(limit)
-                .Select(a => new ActorDto
-                {
-                    Name = a.Name,
-                    Slug = a.Slug,
-                    MainThumb = a.MainThumb
-                })
+                .AsQueryable();
+
+            if (startsWith is not null)
+            {
+                actorsQ = actorsQ
+                    .Where(a =>
+                        a.Name.ToLower().StartsWith(startsWith.ToLower()));
+            }
+
+            actorsQ = actorsQ.Skip(offset).Take(limit);
+
+            var actors = await actorsQ.Select(a =>
+                    new ActorDto
+                    {
+                        Name = a.Name,
+                        Slug = a.Slug,
+                        MainThumb = a.MainThumb,
+                    }
+                )
                 .ToListAsync();
 
             // save data to file for cache
 
+
+            switch (actors.Count)
+            {
+                case <= 0 when offset >= limit:
+                    return NotFound();
+                case <= 0:
+                    return actors;
+            }
+
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
+
 
             await using (var cacheFile = new FileStream(cachePath, FileMode.Create))
             {
