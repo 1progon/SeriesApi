@@ -162,7 +162,7 @@ namespace SeriesApi.Controllers.Actors
         }
 
         // PUT: api/Actors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // To protect from over posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutActor(int id, Actor actor)
@@ -194,12 +194,12 @@ namespace SeriesApi.Controllers.Actors
         }
 
         // POST: api/Actors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // To protect from over posting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Actor>> PostActor(Actor actor)
         {
-            if (_context.Actors == null)
+            if (!await _context.Actors.AnyAsync())
             {
                 return Problem("Entity set 'AppDbContext.Actors'  is null.");
             }
@@ -215,7 +215,7 @@ namespace SeriesApi.Controllers.Actors
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteActor(int id)
         {
-            if (_context.Actors == null)
+            if (!await _context.Actors.AnyAsync())
             {
                 return NotFound();
             }
