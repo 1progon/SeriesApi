@@ -83,6 +83,7 @@ namespace SeriesApi.Controllers.Movies
                     Name = g.Name,
                     Slug = g.Slug,
                     Movies = (IList<MovieDto>)g.Movies
+                        .OrderByDescending(m => m.RatingCount)
                         .Skip(offset)
                         .Take(limit)
                         .Select(m => new MovieDto

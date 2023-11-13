@@ -34,7 +34,7 @@ namespace SeriesApi.Controllers.Movies
 
             var collection = await _context.Collections
                 .Include(c => c.Movies
-                    .OrderBy(m => m.Name)
+                    .OrderByDescending(m => m.RatingCount)
                     .Skip(offset)
                     .Take(limit))
                 .SingleOrDefaultAsync(c => c.Slug == slug);

@@ -138,6 +138,7 @@ namespace SeriesApi.Controllers.Actors
                     Slug = a.Slug,
                     MainThumb = a.MainThumb,
                     Movies = (IList<MovieDto>)a.Movies
+                        .OrderByDescending(m => m.RatingCount)
                         .Skip(offset)
                         .Take(limit)
                         .Select(m => new MovieDto
