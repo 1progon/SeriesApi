@@ -32,15 +32,6 @@
       <Folder Include="Controllers\Movies" />
       <Folder Include="Data\Migrations" />
       <Folder Include="storage\cache\" />
-      <Folder Include="storage\cache\actors\" />
-      <Folder Include="storage\cache\genres\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Storage.tmp\Cache\Actors\actors-index-offset-0-limit-28.json" />
-      <_ContentIncludedByDefault Remove="Storage.tmp\Cache\Actors\actors-index-offset-28-limit-28.json" />
-      <_ContentIncludedByDefault Remove="Storage.tmp\Cache\Actors\actors-index-offset-56-limit-28.json" />
-      <_ContentIncludedByDefault Remove="Storage.tmp\Cache\Actors\actors-index-offset-84-limit-28.json" />
     </ItemGroup>
 
 </Project>
