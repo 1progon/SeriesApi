@@ -58,7 +58,13 @@ var app = builder.Build();
 app.UseCors(p => p
     .AllowAnyHeader()
     .AllowAnyMethod()
-    .WithOrigins("http://localhost:4200"));
+    .WithOrigins(
+        "https://kinoteka.top",
+        "https://api.kinoteka.top",
+        "http://localhost:4200",
+        "https://localhost:4412"
+    )
+);
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -72,7 +78,7 @@ if (app.Environment.IsDevelopment())
     // app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
